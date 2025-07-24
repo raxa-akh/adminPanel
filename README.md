@@ -1,69 +1,76 @@
-# React + TypeScript + Vite
+# User Management SPA
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+**Assignment 4: Клиент – Работа с формами и аутентификацией**  
+Одностраничное приложение на React + TypeScript для CRUD-операций над пользователями с аутентификацией, двумя вариантами форм (Formik и React Hook Form) и валидацией.
 
-Currently, two official plugins are available:
+---
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## Стек технологий
 
-## Expanding the ESLint configuration
+- **Фреймворк**: React 18 + TypeScript  
+- **Маршрутизация**: React Router v6  
+- **Сборка**: Vite  
+- **State-менеджер**: Redux Toolkit + Thunk  
+- **HTTP-клиент**: Axios (`withCredentials: true`)  
+- **Формы**: Formik + Yup и React Hook Form  
+- **Стили**: CSS Modules  
+- **UI-компоненты**: самописные (Header, Sidebar, Table)  
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+---
 
-```js
-export default tseslint.config([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
 
-      // Remove tseslint.configs.recommended and replace with this
-      ...tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      ...tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      ...tseslint.configs.stylisticTypeChecked,
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+## Маршруты
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+| Путь               | Описание                                    | Доступ     |
+|--------------------|---------------------------------------------|------------|
+| `/login`           | Страница логина                             | Public     |
+| `/users`           | Главная: таблица пользователей              | Private    |
+| `/users/newReact`  | Создать пользователя (React Hook Form)      | Private    |
+| `/users/newFormik` | Создать пользователя (Formik + Yup)         | Private    |
+| `/users/:id/edit`  | Редактировать пользователя (RHF)            | Private    |
+| `*`                | Все прочие — редирект на `/login`           | —          |
 
-export default tseslint.config([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+- **Layout** (Header + Sidebar) отображается на всех приватных страницах.
+- `ProtectedRoute` проверяет `isAuthenticated` и хранит в `state.from`.
+
+---
+
+## Функционал
+
+- **CRUD пользователей**:
+  - **Список**: таблица с колонками `ID`, `Email`, кнопки «Редактировать»/«Удалить»
+  - **Создание**:
+    - Два варианта формы:  
+      – **Formik + Yup** (`/users/newFormik`)  
+      – **React Hook Form** (`/users/newReact`)
+    - Поля: `email`, `password`, `confirmPassword`, `name`, `surName`, `fullName`, `birthDate`, `telephone`, `employment`, `userAgreement`
+    - **Валидация**:
+      - `email` — корректный формат
+      - `password` + `confirmPassword` — совпадают (при создании)
+      - `name`, `surName`, `fullName` — обязательны, `maxLength`
+      - `telephone` — regex `+7XXXXXXXXXX` или 10–15 цифр
+    - **FullName**:  
+      – Автоматически собирается из `name + surName`  
+      – Остаётся редактируемым
+    - После успешного создания — редирект на `/users`.
+  - **Редактирование** (`/users/:id/edit`):
+    - Форма на React Hook Form
+    - `email` и `password` недоступны к редактированию
+    - Все остальные поля редактируются аналогично созданию
+  - **Удаление** — кнопка в каждой строке списка.
+- **Валидация** настроена через **Yup** (Formik) и **встроенные правила** (RHF).
+
+---
+
+## Скрипты
+
+- `npm run dev` — запустить Vite-сервер (http://localhost:5173)  
+- `npm run build` — собрать продакшн-версию в папку `dist`  
+- `npm run preview` — запустить локальный сервер для проверки `dist`
+
+---
+
+## Примечание
+на сервере изменил DTO юзеров, DateString, иначе не работало
