@@ -1,0 +1,23 @@
+.header{
+    background-color: var(--scec-color);
+    color: #fff;
+
+    min-height: 80px;
+    display: flex;
+    align-items: center;
+    /* justify-content: center; */
+    width: 100%;
+}
+
+.container{
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    padding: 0 20px 0 20px;
+    
+}
+
+.title{
+    color: #fff;
+    font-size: 25px;;
+}
